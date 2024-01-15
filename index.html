@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Client</title>
+
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+  </head>
+  <body>
+    <input type="text" id="pesanInput" placeholder="Ketik pesan..." />
+    <button onclick="kirimPesan()">Kirim Pesan</button>
+
+    <ul id="pesanList"></ul>
+
+    <script>
+      const socket = io();
+
+      function tampilkanPesan(pesan) {
+        const pesanList = document.getElementById("pesanList");
+        const listItem = document.createElement("li");
+        listItem.textContent = pesan;
+        pesanList.appendChild(listItem);
+      }
+
+      socket.on("pesan", (pesan) => {
+        tampilkanPesan(pesan);
+      });
+
+      socket.on('pesanDatabase', (pesan) => {
+        tampilkanPesan(pesan);
+      });
+
+      function kirimPesan() {
+        const pesanInput = document.getElementById("pesanInput");
+        const pesan = pesanInput.value;
+
+        socket.emit("pesan", pesan);
+        pesanInput.value = "";
+      }
+
+      socket.on('connect', () => {
+        socket.emit('ambilPesanDatabase');
+      });
+    </script>
+  </body>
+</html>
